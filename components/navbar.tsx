@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Users, Package } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -13,13 +14,13 @@ export function Navbar() {
 
   return (
     <nav
-      className="bg-white border-b dark:bg-gray-900 dark:border-gray-800"
+      className="bg-background border-b"
       aria-label="Barra de navegación principal"
     >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center text-xl font-bold">
+            <Link href="/" className="flex items-center text-xl font-bold text-primary">
               <Home className="mr-2 h-6 w-6" />
               <span>CRUD App</span>
             </Link>
@@ -33,6 +34,7 @@ export function Navbar() {
               <Package className="mr-2 h-5 w-5" />
               <span>Productos</span>
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </div>

@@ -11,13 +11,13 @@ import {
 export default function Home() {
   return (
     <main className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">
+      <h1 className="text-4xl font-bold mb-3">
         Sistema CRUD de Usuarios y Productos
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Gestión de Usuarios */}
-        <Card>
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>Gestión de Usuarios</CardTitle>
             <CardDescription>
@@ -26,18 +26,20 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col space-y-4">
-              <Button asChild className="w-full">
-                <Link href="/users">Ver Usuarios</Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/users/new">Crear Usuario</Link>
-              </Button>
+              <Link href="/users">
+                <Button className="w-full">Ver Usuarios</Button>
+              </Link>
+              <Link href="/users/new">
+                <Button variant="outline" className="w-full">
+                  Crear Usuario
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
 
         {/* Gestión de Productos */}
-        <Card>
+        <Card className="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>Gestión de Productos</CardTitle>
             <CardDescription>
@@ -46,12 +48,16 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col space-y-4">
-              <Button asChild className="w-full">
-                <Link href="/products">Ver Productos</Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/products/new">Crear Producto</Link>
-              </Button>
+              <Link href="/products">
+                <Button variant="secondary" className="w-full">
+                  Ver Productos
+                </Button>
+              </Link>
+              <Link href="/products/new">
+                <Button variant="outline" className="w-full">
+                  Crear Producto
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

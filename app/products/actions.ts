@@ -22,6 +22,18 @@ const ProductSchema = z.object({
   image_url: z.string().optional().nullable(),
 });
 
+// Función auxiliar para parsear datos del formulario
+function parseFormData(formData: FormData) {
+  return {
+    name: formData.get("name") as string,
+    description: (formData.get("description") as string) || null,
+    price: Number.parseFloat(formData.get("price") as string),
+    stock: Number.parseInt(formData.get("stock") as string),
+    image_url: (formData.get("image_url") as string) || null,
+  };
+}
+
+// Obtener todos los productos
 export async function getProducts(): Promise<Product[]> {
   try {
     const products = await prisma.product.findMany({
@@ -36,6 +48,7 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
+// Obtener un producto por ID
 export async function getProductById(id: number): Promise<Product | null> {
   try {
     const product = await prisma.product.findUnique({
@@ -48,21 +61,22 @@ export async function getProductById(id: number): Promise<Product | null> {
   }
 }
 
-export async function createProduct(formData: FormData) {
-  const name = formData.get("name") as string;
-  const description = (formData.get("description") as string) || null;
-  const price = Number.parseFloat(formData.get("price") as string);
-  const stock = Number.parseInt(formData.get("stock") as string);
-  const image_url = (formData.get("image_url") as string) || null;
+// Crear un producto
+export async function createProduct(
+  formData: FormData
+): Promise<{ success: true } | { error: Record<string, string[] | string> }> {
+  const data = parseFormData(formData);
 
-  // Validar datos
-  const validatedFields = ProductSchema.safeParse({
-    name,
-    description,
-    price,
-    stock,
-    image_url,
-  });
+  // Validación extra básica
+  if (!data.name || isNaN(data.price) || isNaN(data.stock)) {
+    return {
+      error: {
+        _form: "Campos requeridos inválidos.",
+      },
+    };
+  }
+
+  const validatedFields = ProductSchema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
@@ -72,13 +86,7 @@ export async function createProduct(formData: FormData) {
 
   try {
     await prisma.product.create({
-      data: {
-        name,
-        description,
-        price,
-        stock,
-        image_url,
-      },
+      data,
     });
 
     revalidatePath("/products");
@@ -93,21 +101,16 @@ export async function createProduct(formData: FormData) {
   }
 }
 
-export async function updateProduct(id: number, formData: FormData) {
-  const name = formData.get("name") as string;
-  const description = (formData.get("description") as string) || null;
-  const price = Number.parseFloat(formData.get("price") as string);
-  const stock = Number.parseInt(formData.get("stock") as string);
-  const image_url = (formData.get("image_url") as string) || null;
+// Actualizar un producto
+export async function updateProduct(
+  id: number,
+  formData: FormData
+): Promise<{ success: true } | { error: Record<string, string[] | string> }> {
+  const data = parseFormData(formData);
 
-  // Validar datos
   const validatedFields = ProductSchema.safeParse({
+    ...data,
     id,
-    name,
-    description,
-    price,
-    stock,
-    image_url,
   });
 
   if (!validatedFields.success) {
@@ -120,11 +123,7 @@ export async function updateProduct(id: number, formData: FormData) {
     await prisma.product.update({
       where: { id },
       data: {
-        name,
-        description,
-        price,
-        stock,
-        image_url,
+        ...data,
         updated_at: new Date(),
       },
     });
@@ -141,15 +140,23 @@ export async function updateProduct(id: number, formData: FormData) {
   }
 }
 
-export async function deleteProduct(id: number) {
+// Eliminar un producto
+export async function deleteProduct(
+  id: number
+): Promise<{ success?: true; error?: { _form: string } }> {
   try {
     await prisma.product.delete({
       where: { id },
     });
 
     revalidatePath("/products");
+    return { success: true };
   } catch (error) {
     console.error("Error al eliminar producto:", error);
-    throw new Error("No se pudo eliminar el producto");
+    return {
+      error: {
+        _form: "No se pudo eliminar el producto.",
+      },
+    };
   }
 }

@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, Pencil } from "lucide-react";
 import type { Decimal } from "@prisma/client/runtime/library";
+import DeleteButton from "@/components/deleteButton";
 
 export default async function ProductsPage() {
   const products = await getProducts();
@@ -27,10 +28,10 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-card rounded-lg shadow overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/50">
               <TableHead>ID</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Precio</TableHead>
@@ -48,11 +49,24 @@ export default async function ProductsPage() {
               </TableRow>
             ) : (
               products.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product.id} className="hover:bg-muted/30">
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>${formatPrice(product.price)}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
+                  <TableCell className="font-medium">
+                    ${formatPrice(product.price)}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${Number(product.stock) > 20
+                          ? "bg-success/20 text-success-foreground"
+                          : Number(product.stock) > 5
+                            ? "bg-warning/20 text-warning-foreground"
+                            : "bg-destructive/20 text-destructive-foreground"
+                        }`}
+                    >
+                      {product.stock} unidades
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {new Date(product.updated_at).toLocaleDateString()}
                   </TableCell>
@@ -63,16 +77,7 @@ export default async function ProductsPage() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <form
-                        action={async () => {
-                          "use server";
-                          await deleteProduct(product.id);
-                        }}
-                      >
-                        <Button variant="destructive" size="sm" type="submit">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
+                      <DeleteButton id={product.id} />
                     </div>
                   </TableCell>
                 </TableRow>

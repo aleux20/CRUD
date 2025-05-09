@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 import type { Product } from "@prisma/client";
 import type { Decimal } from "@prisma/client/runtime/library";
 
@@ -19,11 +20,6 @@ type FormErrors = {
   stock?: string[];
   image_url?: string[];
   _form?: string;
-};
-
-type ActionResult = {
-  success?: boolean;
-  error?: FormErrors;
 };
 
 export function ProductForm({ product }: { product?: Product }) {
@@ -46,7 +42,7 @@ export function ProductForm({ product }: { product?: Product }) {
     setErrors({});
 
     try {
-      const result: ActionResult = product?.id
+      const result = product?.id
         ? await updateProduct(product.id, formData)
         : await createProduct(formData);
 
@@ -65,7 +61,12 @@ export function ProductForm({ product }: { product?: Product }) {
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardHeader className="pb-3">
+        <CardTitle>
+          {product ? "Editar Producto" : "Crear Nuevo Producto"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <form action={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nombre del Producto</Label>
@@ -75,10 +76,12 @@ export function ProductForm({ product }: { product?: Product }) {
               defaultValue={product?.name || ""}
               placeholder="Nombre del producto"
               required
-              aria-invalid={!!errors.name}
             />
             {errors.name && (
-              <p className="text-sm text-red-500">{errors.name[0]}</p>
+              <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="h-4 w-4" />
+                {errors.name[0]}
+              </p>
             )}
           </div>
 
@@ -90,29 +93,39 @@ export function ProductForm({ product }: { product?: Product }) {
               defaultValue={product?.description || ""}
               placeholder="Descripción del producto"
               rows={3}
-              aria-invalid={!!errors.description}
             />
             {errors.description && (
-              <p className="text-sm text-red-500">{errors.description[0]}</p>
+              <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="h-4 w-4" />
+                {errors.description[0]}
+              </p>
             )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="price">Precio</Label>
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                step="0.01"
-                min="0"
-                defaultValue={formatPriceForInput(product?.price)}
-                placeholder="0.00"
-                required
-                aria-invalid={!!errors.price}
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  $
+                </span>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  defaultValue={formatPriceForInput(product?.price)}
+                  placeholder="0.00"
+                  className="pl-7"
+                  required
+                />
+              </div>
               {errors.price && (
-                <p className="text-sm text-red-500">{errors.price[0]}</p>
+                <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.price[0]}
+                </p>
               )}
             </div>
 
@@ -127,10 +140,12 @@ export function ProductForm({ product }: { product?: Product }) {
                 defaultValue={product?.stock || "0"}
                 placeholder="0"
                 required
-                aria-invalid={!!errors.stock}
               />
               {errors.stock && (
-                <p className="text-sm text-red-500">{errors.stock[0]}</p>
+                <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.stock[0]}
+                </p>
               )}
             </div>
           </div>
@@ -143,24 +158,29 @@ export function ProductForm({ product }: { product?: Product }) {
               type="url"
               defaultValue={product?.image_url || ""}
               placeholder="https://ejemplo.com/imagen.jpg"
-              aria-invalid={!!errors.image_url}
             />
             {errors.image_url && (
-              <p className="text-sm text-red-500">{errors.image_url[0]}</p>
+              <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="h-4 w-4" />
+                {errors.image_url[0]}
+              </p>
             )}
           </div>
 
           {errors._form && (
-            <p className="text-sm text-red-500 font-medium">{errors._form}</p>
+            <div className="bg-destructive/10 text-destructive p-3 rounded-md flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              <p className="text-sm font-medium">{errors._form}</p>
+            </div>
           )}
 
           <div className="flex justify-end gap-4">
             <Link href="/products">
-              <Button variant="outline" type="button" disabled={isSubmitting}>
+              <Button variant="outline" type="button">
                 Cancelar
               </Button>
             </Link>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" variant="secondary" disabled={isSubmitting}>
               {isSubmitting ? "Guardando..." : product ? "Actualizar" : "Crear"}
             </Button>
           </div>

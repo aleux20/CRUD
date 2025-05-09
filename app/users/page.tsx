@@ -26,10 +26,10 @@ export default async function UsersPage() {
         </Link>
       </div>
 
-      <div className="bg-card-foreground rounded-lg shadow overflow-x-auto">
+      <div className="bg-card rounded-lg shadow overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/50">
               <TableHead>ID</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Email</TableHead>
@@ -47,11 +47,22 @@ export default async function UsersPage() {
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className="hover:bg-muted/30">
                   <TableCell>{user.id}</TableCell>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === "admin"
+                          ? "bg-accent/20 text-accent-foreground"
+                          : user.role === "editor"
+                            ? "bg-secondary/20 text-secondary-foreground"
+                            : "bg-muted text-muted-foreground"
+                        }`}
+                    >
+                      {user.role}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {new Date(user.created_at).toLocaleDateString()}
                   </TableCell>
