@@ -20,17 +20,28 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center text-xl font-bold text-primary">
+            <Link
+              href="/"
+              className="flex items-center text-xl font-bold text-primary"
+            >
               <Home className="mr-2 h-6 w-6" />
               <span>CRUD App</span>
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/users" className={linkClasses("/users")}>
+            <Link
+              href="/users"
+              className={linkClasses("/users")}
+              aria-current={pathname === "/users" ? "page" : undefined}
+            >
               <Users className="mr-2 h-5 w-5" />
               <span>Usuarios</span>
             </Link>
-            <Link href="/products" className={linkClasses("/products")}>
+            <Link
+              href="/products"
+              className={linkClasses("/products")}
+              aria-current={pathname === "/products" ? "page" : undefined}
+            >
               <Package className="mr-2 h-5 w-5" />
               <span>Productos</span>
             </Link>

@@ -2,24 +2,27 @@
 
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteProduct } from "@/app/products/actions";
 import { useTransition } from "react";
 
 type Props = {
     id: number;
+    onDelete: (id: number) => Promise<any>;
+    confirmMessage?: string;
 };
 
-export default function DeleteButton({ id }: Props) {
+export default function DeleteButton({
+    id,
+    onDelete,
+    confirmMessage = "¿Estás seguro de que deseas eliminar este usuario?",
+}: Props) {
     const [isPending, startTransition] = useTransition();
 
     const handleDelete = () => {
-        const confirmed = window.confirm(
-            "¿Estás seguro de que deseas eliminar este producto?"
-        );
+        const confirmed = window.confirm(confirmMessage);
         if (!confirmed) return;
 
         startTransition(() => {
-            deleteProduct(id);
+            onDelete(id);
         });
     };
 

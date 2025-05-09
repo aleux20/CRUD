@@ -28,14 +28,14 @@ type FormErrors = {
 export function UserForm({ user }: { user?: User }) {
   const router = useRouter();
   const [errors, setErrors] = useState<FormErrors>({});
-  const [role, setRole] = useState(user?.role || "user");
+  const [role, setRole] = useState<"user" | "admin" | "editor">(
+    user?.role === "admin" || user?.role === "editor" ? user.role : "user"
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setErrors({});
-
-    // Asegurarse de que el rol seleccionado se incluya en el formData
     formData.set("role", role);
 
     try {
@@ -43,10 +43,10 @@ export function UserForm({ user }: { user?: User }) {
         ? await updateUser(user.id, formData)
         : await createUser(formData);
 
-      if (result?.error) {
+      if ("error" in result) {
         setErrors(result.error);
         setIsSubmitting(false);
-      } else if (result?.success) {
+      } else {
         router.push("/users");
       }
     } catch (error) {
@@ -62,7 +62,14 @@ export function UserForm({ user }: { user?: User }) {
         <CardTitle>{user ? "Editar Usuario" : "Crear Nuevo Usuario"}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            handleSubmit(formData);
+          }}
+          className="space-y-6"
+        >
           <div className="space-y-2">
             <Label htmlFor="name">Nombre</Label>
             <Input
@@ -71,6 +78,7 @@ export function UserForm({ user }: { user?: User }) {
               defaultValue={user?.name || ""}
               placeholder="Nombre completo"
               required
+              aria-invalid={!!errors.name}
             />
             {errors.name && (
               <p className="text-sm text-destructive flex items-center gap-1 mt-1">
@@ -89,6 +97,7 @@ export function UserForm({ user }: { user?: User }) {
               defaultValue={user?.email || ""}
               placeholder="correo@ejemplo.com"
               required
+              aria-invalid={!!errors.email}
             />
             {errors.email && (
               <p className="text-sm text-destructive flex items-center gap-1 mt-1">
@@ -100,7 +109,10 @@ export function UserForm({ user }: { user?: User }) {
 
           <div className="space-y-2">
             <Label htmlFor="role">Rol</Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select
+              value={role}
+              onValueChange={(value) => setRole(value as typeof role)}
+            >
               <SelectTrigger id="role">
                 <SelectValue placeholder="Seleccionar rol" />
               </SelectTrigger>

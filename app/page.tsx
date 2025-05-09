@@ -10,8 +10,8 @@ import {
 
 export default function Home() {
   return (
-    <main className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold mb-3">
+    <main className="container mx-auto py-10 min-h-[calc(100vh-5rem)]">
+      <h1 className="text-4xl font-bold mb-6 text-center">
         Sistema CRUD de Usuarios y Productos
       </h1>
 
@@ -27,7 +27,9 @@ export default function Home() {
           <CardContent>
             <div className="flex flex-col space-y-4">
               <Link href="/users">
-                <Button className="w-full">Ver Usuarios</Button>
+                <Button variant="secondary" className="w-full text-white">
+                  Ver Usuarios
+                </Button>
               </Link>
               <Link href="/users/new">
                 <Button variant="outline" className="w-full">
@@ -49,7 +51,7 @@ export default function Home() {
           <CardContent>
             <div className="flex flex-col space-y-4">
               <Link href="/products">
-                <Button variant="secondary" className="w-full">
+                <Button variant="secondary" className="w-full text-white">
                   Ver Productos
                 </Button>
               </Link>

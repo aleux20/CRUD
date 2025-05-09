@@ -46,7 +46,7 @@ export function ProductForm({ product }: { product?: Product }) {
         ? await updateProduct(product.id, formData)
         : await createProduct(formData);
 
-      if (result?.error) {
+      if ("error" in result) {
         setErrors(result.error);
         setIsSubmitting(false);
       } else if (result?.success) {
@@ -180,7 +180,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 Cancelar
               </Button>
             </Link>
-            <Button type="submit" variant="secondary" disabled={isSubmitting}>
+            <Button type="submit" variant="secondary" disabled={isSubmitting} className="text-white">
               {isSubmitting ? "Guardando..." : product ? "Actualizar" : "Crear"}
             </Button>
           </div>

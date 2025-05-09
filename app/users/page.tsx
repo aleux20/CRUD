@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, Pencil} from "lucide-react";
+import DeleteButton from "@/components/deleteButton";
 
 export default async function UsersPage() {
   const users = await getUsers();
@@ -73,16 +74,11 @@ export default async function UsersPage() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <form
-                        action={async () => {
-                          "use server";
-                          await deleteUser(user.id);
-                        }}
-                      >
-                        <Button variant="destructive" size="sm" type="submit">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
+                      <DeleteButton
+                        id={user.id}
+                        onDelete={deleteUser}
+                        confirmMessage="¿Estás seguro de que deseas eliminar este usuario?"
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

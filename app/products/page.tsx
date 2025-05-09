@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProducts, deleteProduct } from "./actions";
+import { deleteProduct, getProducts } from "./actions";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -77,7 +77,11 @@ export default async function ProductsPage() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <DeleteButton id={product.id} />
+                      <DeleteButton
+                        id={product.id}
+                        onDelete={deleteProduct}
+                        confirmMessage="¿Estás seguro de que deseas eliminar este producto?"
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
