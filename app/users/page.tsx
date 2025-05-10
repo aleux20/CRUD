@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PlusCircle, Pencil} from "lucide-react";
-import DeleteButton from "@/components/deleteButton";
+import DeleteButton from "@/components/delete-button";
 
 export default async function UsersPage() {
   const users = await getUsers();

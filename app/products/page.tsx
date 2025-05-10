@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { PlusCircle, Pencil } from "lucide-react";
 import type { Decimal } from "@prisma/client/runtime/library";
-import DeleteButton from "@/components/deleteButton";
+import DeleteButton from "@/components/delete-button";
 
 export default async function ProductsPage() {
   const products = await getProducts();
@@ -37,6 +37,7 @@ export default async function ProductsPage() {
               <TableHead>Precio</TableHead>
               <TableHead>Stock</TableHead>
               <TableHead>Última Actualización</TableHead>
+              <TableHead>Imagen</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -69,6 +70,17 @@ export default async function ProductsPage() {
                   </TableCell>
                   <TableCell>
                     {new Date(product.updated_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {product.image_url ? (
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ) : (
+                      <span className="text-muted">Sin imagen</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
